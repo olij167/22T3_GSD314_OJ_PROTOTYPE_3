@@ -1,0 +1,43 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2a55a72878a04644482fa4522139070c, type: 3}
+  m_Name: NPC 1
+  m_EditorClassIdentifier: 
+  npcName: A
+  greetingDialogue:
+  - {fileID: 11400000, guid: 29d901ccb70561846acb01855bd922b6, type: 2}
+  - {fileID: 11400000, guid: abf9d41b7c3ab0d4b821ef349ddc094c, type: 2}
+  - {fileID: 11400000, guid: fe44b57a701062e4bbc3564836d30b2d, type: 2}
+  - {fileID: 11400000, guid: 7285e5e19c609e34185a327db98be470, type: 2}
+  - {fileID: 11400000, guid: c077052838a7b0c4d97d975fb1ce26e0, type: 2}
+  - {fileID: 11400000, guid: e42389c552d9f1442aec0891a0b9196b, type: 2}
+  - {fileID: 11400000, guid: 88c4dd2112adda24091b97fbf7348c34, type: 2}
+  - {fileID: 11400000, guid: 06d08e4cd7cb7f846a772c8a2f00d060, type: 2}
+  goodbyeDialogue:
+  - {fileID: 11400000, guid: 3d11c40e87090e84c8a87e7415b19831, type: 2}
+  - {fileID: 11400000, guid: 8c732f509db302c439681a214ad72f86, type: 2}
+  - {fileID: 11400000, guid: a033b5a92f9cbd84b8ec020903819567, type: 2}
+  - {fileID: 11400000, guid: d4512fd5463b7c848be31c99aca6be8f, type: 2}
+  - {fileID: 11400000, guid: 84d3686c34801954b9e67b78bcef70b0, type: 2}
+  - {fileID: 11400000, guid: 5c58dcaa3b5833d4fa0329d26e6de6df, type: 2}
+  - {fileID: 11400000, guid: 98692b0e2f8455545803c3264c6deda3, type: 2}
+  - {fileID: 11400000, guid: f3267c849e2a20644969cd32a93229d8, type: 2}
+  changeTopicDialogue:
+  - {fileID: 11400000, guid: c95c59856b2e869448c1fcb366d958e4, type: 2}
+  - {fileID: 11400000, guid: 770afc37e0c9ee34096d9729efe51dbc, type: 2}
+  - {fileID: 11400000, guid: c80baa1d30652bf4ab0b8893db055cad, type: 2}
+  - {fileID: 11400000, guid: 4c446dfc0a74175478f20f45d39936c9, type: 2}
+  - {fileID: 11400000, guid: ee7c34d08d6ddd743a44f9e15d27f289, type: 2}
+  - {fileID: 11400000, guid: e24e257802adf654488259a66f13a153, type: 2}
+  - {fileID: 11400000, guid: cfe50c2e461922b41adc194a9c160206, type: 2}
+  - {fileID: 11400000, guid: d735416c45ab4ca47903892d874e56b4, type: 2}
+  emotionsList: []
