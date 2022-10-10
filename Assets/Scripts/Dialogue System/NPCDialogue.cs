@@ -2,23 +2,30 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(menuName =("DialogueSystem/NPCDialogue"))]
-public class NPCDialogue : ScriptableObject
+[System.Serializable]
+public class NPCDialogue
 {
-    [TextArea(3, 10)]
-    public string dialogue; // set dialogue text
+    public List<NPCDialogueOption> greetingDialogue;
 
-    public bool requiresResponse = true;   // Set to false to disable player dialogue selection
+    public List<NPCDialogueOption> goodbyeDialogue;
 
-    public NPCDialogue continuedDialogue; //Set another dialogue option to follow this
-                                          //**only if requiresResponse is false
+    public List<NPCDialogueOption> changeTopicDialogue;
+
+    [System.Serializable]
+    public struct DialogueConnections
+    {
+        public PlayerDialogueOption playerDialogueInput;
+        public List<Responses> npcResponses;
+    }
+
+    [System.Serializable]
+    public struct Responses
+    {
+        public NPCEmotions.Mood npcMood;
+        public NPCDialogueOption response;
+    }
+
+    public List<DialogueConnections> dialogueConnections; // create a different element for each potential player option
+
     
-    public List<DialogueOption> playerResponses; //Set player dialogue options to respond with
-
-    public bool limitedTime; // If true player will need to respond within a time limit, when the time runs out the currently selected option will be said
-    public float timeLimit;
-
-    public bool canChangeTopic = true; //if true the player will be able to change the topic or leave when responding
-                                       //**unless there is a time limit
-
 }

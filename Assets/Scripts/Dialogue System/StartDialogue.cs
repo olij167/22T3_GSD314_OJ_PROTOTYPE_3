@@ -6,20 +6,50 @@ public class StartDialogue : MonoBehaviour
 {
     [SerializeField] private DialogueSystem dialogueSystem;
     [SerializeField] private PlayerDialogue playerDialogue;
+
+    
     public void EnterDialogue(NPCInfo npc)
     {
         //Set NPC
         //Set greeting text
         //Set player options
+        dialogueSystem.enabled = true;
 
         dialogueSystem.npc = npc;
-        NPCDialogue greetingDialogue = npc.greetingDialogue[Random.Range(0, npc.greetingDialogue.Count)];
-        playerDialogue.SetPlayerInquiriesForNPC(npc, greetingDialogue);
+        dialogueSystem.npc.npcEmotions.SetMood();
+        dialogueSystem.npcNameText.text = npc.npcName;
+
+        NPCDialogueOption greetingDialogue = npc.npcDialogue.greetingDialogue[Random.Range(0, npc.npcDialogue.greetingDialogue.Count)];
+
+
+        greetingDialogue.playerResponses = playerDialogue.SetPlayerQuestionsForNPC(npc, greetingDialogue).playerResponses;
+
+        dialogueSystem.SetNewDialogueText(greetingDialogue);
+
+        dialogueSystem.playerDialogueText.text = playerDialogue.greetingDialogue[Random.Range(0, playerDialogue.greetingDialogue.Count)].dialogue;
+
+
 
         //Deactivate Player Controller
         //Lock Camera to NPC target
 
-        dialogueSystem.enabled = true;
+
+        //Cursor.lockState = CursorLockMode.Confined;
+        //Cursor.visible = true;
         dialogueSystem.BeginDialogue();
+    }
+
+    public void EnterDialogueWithRandomNPC()
+    {
+        EnterDialogue(GetRandomNPC());
+    }
+
+    public NPCInfo GetRandomNPC()
+    {
+        int rand = Random.Range(0, playerDialogue.playerQuestions.Count);
+
+        NPCInfo npc = playerDialogue.playerQuestions[rand].npc;
+
+        return npc;
     }
 }

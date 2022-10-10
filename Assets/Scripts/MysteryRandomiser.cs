@@ -6,10 +6,10 @@ public class MysteryRandomiser : MonoBehaviour
 {
     public List<NPCInfo> npcList;
 
-    public List<NPCDialogue> potentialGreetings;
-    public List<NPCDialogue> potentialAlibis;
-    public List<NPCDialogue> potentialInnocentStatements;
-    public List<NPCDialogue> potentialNPCOpinions;
+    public List<NPCDialogueOption> potentialGreetings;
+    public List<NPCDialogueOption> potentialAlibis;
+    public List<NPCDialogueOption> potentialInnocentStatements;
+    public List<NPCDialogueOption> potentialNPCOpinions;
 
 
     //set a random npc as guilty

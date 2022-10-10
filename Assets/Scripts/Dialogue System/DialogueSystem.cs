@@ -9,18 +9,20 @@ public class DialogueSystem : MonoBehaviour
 {
     [SerializeField] private bool inDialogue;
     [SerializeField] private bool playerIsSpeaking;
+    [SerializeField] private bool timerAutoStart;
 
     public NPCInfo npc;
 
     //Dialogue to display in npc text box
-    [SerializeField] private NPCDialogue otherDialogue;
+    [SerializeField] private NPCDialogueOption npcDialogue;
 
     //Dialogue to display in the player text box
-    [SerializeField] private DialogueOption selectedDialogueOption;
+    [SerializeField] private PlayerDialogueOption selectedDialogueOption;
 
     //Dialogue UI
-    [SerializeField] private TextMeshProUGUI otherDialogueText;
-    [SerializeField] private TextMeshProUGUI playerDialogueText;
+    public TextMeshProUGUI npcNameText;
+    [SerializeField] private TextMeshProUGUI npcDialogueText;
+    public TextMeshProUGUI playerDialogueText;
 
     //player Dialogue Selection UI
     [SerializeField] private List<Image> selectedOptionImages;
@@ -34,7 +36,7 @@ public class DialogueSystem : MonoBehaviour
     private float responseTimerReset;
 
     [SerializeField] private Slider responseTimerUI;
-    [SerializeField] private bool timerAutoStart; 
+
         // if true the timer will automatically start during a time-limited response and pick a random option if the player doesn't begin viewing the dialogue options
         // if false the timer won't start until the player has begun viewing the dialogue options
 
@@ -45,30 +47,41 @@ public class DialogueSystem : MonoBehaviour
 
     private int WElementNum = 0, AElementNum = 1, DElementNum = 2, SElementNum = 3;
 
-
-
-    private void Start()
-    {
-        SetNewDialogueText();
-        SetResponseTimer();
-        playerDialogueText.text = " ";
-    }
-
     private void Update()
     {
         if (inDialogue)
         {
             if (!playerResponseLockedIn)
             {
-                if (otherDialogue.requiresResponse)
+                selectedOptionImages[6].enabled = true;
+                if (npcDialogue.requiresResponse)
                 {
+                    
                     ViewFullDialogueOption();
+
+                    if (selectedDialogueOption != null)
+                    {
+                        selectedOptionImages[6].color = Color.white;
+                    }
+                    else
+                    {
+                        selectedOptionImages[6].color = Color.grey;
+                    }
                 }
                 else
                 {
+                    selectedOptionImages[6].color = Color.white;
+
                     if (Input.GetKeyDown(KeyCode.Space))
                     {
-                        LockInResponse();
+                        if (npcDialogue.endOfConversation)
+                        {
+                            LeaveDialogue();
+                        }
+                        else
+                        {
+                            LockInResponse();
+                        }
                     }
                 }
 
@@ -84,7 +97,7 @@ public class DialogueSystem : MonoBehaviour
                             // select a random option if the player doesn't have anything selected
                             if (selectedDialogueOption == null)
                             {
-                                selectedDialogueOption = otherDialogue.playerResponses[Random.Range(0, otherDialogue.playerResponses.Count)];
+                                selectedDialogueOption = npcDialogue.playerResponses[Random.Range(0, npcDialogue.playerResponses.Count)];
                                 playerDialogueText.text = selectedDialogueOption.dialogue;
                             }
 
@@ -112,40 +125,45 @@ public class DialogueSystem : MonoBehaviour
                     }
                 }
             }
-            else if (selectedOptionText.text != "Q")
+            else if (selectedOptionText.text != "Q" && !npcDialogue.endOfConversation)
             {
                 //Progress Conversation
 
                 if (selectedOptionText.text != "E")
                 {
                     // Check if dialogue requires the player to continue the conversation
-                    if (!otherDialogue.requiresResponse)
+                    if (!npcDialogue.requiresResponse)
                     {
                         //If it doesn't the npc dialogue will only read the first element from the current npc DialogueOption's response list
-                        otherDialogue = otherDialogue.continuedDialogue;
+                        npcDialogue = npcDialogue.continuedDialogue;
                     }
                     else
                     {
                         // if the player responds the npc dialogue will only read the first element from the selected DialogueOption's response list
-                        otherDialogue = selectedDialogueOption.npcResponse;
+                        npcDialogue = npc.RespondBasedOnMood(selectedDialogueOption);
+                            //selectedDialogueOption.npcResponse;
                     }
                 }
 
-                SetNewDialogueText();
+                SetNewDialogueText(npcDialogue);
                 
             }
+        }
+        else
+        {
+            LeaveDialogue();
         }
     }
 
     private void ViewFullDialogueOption()
     {
         //select W response
-        if (otherDialogue.playerResponses.Count >= 1)
+        if (npcDialogue.playerResponses.Count >= 1)
         {
             if (Input.GetKeyDown(KeyCode.W))
             {
-                playerDialogueText.text = otherDialogue.playerResponses[WElementNum].dialogue;
-                selectedDialogueOption = otherDialogue.playerResponses[WElementNum];
+                playerDialogueText.text = npcDialogue.playerResponses[WElementNum].dialogue;
+                selectedDialogueOption = npcDialogue.playerResponses[WElementNum];
                 HighlightSelectedOption(0);
                 selectedOptionText.text = "W";
                 Debug.Log("Displaying W Option");
@@ -153,12 +171,12 @@ public class DialogueSystem : MonoBehaviour
         }
 
         //select A response
-        if (otherDialogue.playerResponses.Count >= 2)
+        if (npcDialogue.playerResponses.Count >= 2)
         {
             if (Input.GetKeyDown(KeyCode.A))
             {
-                playerDialogueText.text = otherDialogue.playerResponses[AElementNum].dialogue;
-                selectedDialogueOption = otherDialogue.playerResponses[AElementNum];
+                playerDialogueText.text = npcDialogue.playerResponses[AElementNum].dialogue;
+                selectedDialogueOption = npcDialogue.playerResponses[AElementNum];
                 HighlightSelectedOption(1);
                 selectedOptionText.text = "A";
                 Debug.Log("Displaying A Option");
@@ -167,12 +185,12 @@ public class DialogueSystem : MonoBehaviour
         }
 
         //select D response
-        if (otherDialogue.playerResponses.Count >= 3)
+        if (npcDialogue.playerResponses.Count >= 3)
         {
             if (Input.GetKeyDown(KeyCode.D))
             {
-                playerDialogueText.text = otherDialogue.playerResponses[DElementNum].dialogue;
-                selectedDialogueOption = otherDialogue.playerResponses[DElementNum];
+                playerDialogueText.text = npcDialogue.playerResponses[DElementNum].dialogue;
+                selectedDialogueOption = npcDialogue.playerResponses[DElementNum];
                 HighlightSelectedOption(2);
                 selectedOptionText.text = "D";
                 Debug.Log("Displaying D Option");
@@ -182,12 +200,12 @@ public class DialogueSystem : MonoBehaviour
         }
 
         //select S response
-        if (otherDialogue.playerResponses.Count >= 4)
+        if (npcDialogue.playerResponses.Count >= 4)
         {
             if (Input.GetKeyDown(KeyCode.S))
             {
-                playerDialogueText.text = otherDialogue.playerResponses[SElementNum].dialogue;
-                selectedDialogueOption = otherDialogue.playerResponses[SElementNum];
+                playerDialogueText.text = npcDialogue.playerResponses[SElementNum].dialogue;
+                selectedDialogueOption = npcDialogue.playerResponses[SElementNum];
                 HighlightSelectedOption(3);
                 selectedOptionText.text = "S";
                 Debug.Log("Displaying S Option");
@@ -197,7 +215,7 @@ public class DialogueSystem : MonoBehaviour
         }
 
         //select Leave Conversation
-        if (playerIsSpeaking && otherDialogue.canChangeTopic && !otherDialogue.limitedTime)
+        if (playerIsSpeaking && npcDialogue.canChangeTopic && !npcDialogue.limitedTime)
         {
             if (Input.GetKeyDown(KeyCode.Q))
             {
@@ -211,13 +229,22 @@ public class DialogueSystem : MonoBehaviour
         }
 
         //select Change Topic / View more responses
-        if (playerIsSpeaking && otherDialogue.canChangeTopic && !otherDialogue.limitedTime)
+        if (playerIsSpeaking && npcDialogue.canChangeTopic && !npcDialogue.limitedTime)
         {
             if (Input.GetKeyDown(KeyCode.E))
             {
-                int rand = Random.Range(0, playerDialogue.changeTopicDialogue.Count);
-                playerDialogueText.text = playerDialogue.changeTopicDialogue[rand].dialogue;
-                selectedDialogueOption = playerDialogue.changeTopicDialogue[rand];
+                if (playerDialogue.questions.playerResponses.Count < 4)
+                {
+                    int rand = Random.Range(0, playerDialogue.changeTopicDialogue.Count);
+                    playerDialogueText.text = playerDialogue.changeTopicDialogue[rand].dialogue;
+                    selectedDialogueOption = playerDialogue.changeTopicDialogue[rand];
+                }
+                else
+                {
+                    playerDialogueText.text = playerDialogue.viewMoreDialogue.dialogue;
+                    selectedDialogueOption = playerDialogue.viewMoreDialogue;
+                }
+
                 HighlightSelectedOption(5);
                 selectedOptionText.text = "E";
                 Debug.Log("Displaying E Option");
@@ -226,16 +253,21 @@ public class DialogueSystem : MonoBehaviour
 
     }
 
-    private void SetNewDialogueText()
+    public void SetNewDialogueText(NPCDialogueOption npcDialogueOption)
     {
-        otherDialogueText.text = otherDialogue.dialogue;
+        npcDialogueText.text = npcDialogueOption.dialogue;
+        npcDialogue = npcDialogueOption;
 
         playerResponseLockedIn = false;
         ResetHighlightedOption();
 
-        if (otherDialogue.requiresResponse)
+        if (npcDialogue.requiresResponse)
         {
-            if(!otherDialogue == playerDialogue.questions)
+            if (npcDialogue.playerResponses.Count == 0)
+            {
+                npcDialogue.playerResponses = playerDialogue.SetPlayerQuestionsForNPC(npc, npcDialogue).playerResponses;
+            }
+            if(!npcDialogue == playerDialogue.questions)
             {
                 playerIsSpeaking = false;
             }
@@ -256,7 +288,7 @@ public class DialogueSystem : MonoBehaviour
 
     private void CheckValidDialougeOptions()
     {
-        switch(otherDialogue.playerResponses.Count)
+        switch(npcDialogue.playerResponses.Count)
         {
             case 0:
                 BlockDialogueOption(0);
@@ -321,8 +353,10 @@ public class DialogueSystem : MonoBehaviour
         responseTimer = responseTimerReset;
         responseTimerUI.value = responseTimer;
         responseTimerActive = false;
+        selectedOptionImages[6].enabled = false;
 
-        selectedDialogueOption.AdjustAttitudeValues(npc);
+        npc.npcEmotions.emotion = selectedDialogueOption.AffectEmotionValues(npc.npcEmotions.emotion);
+        npc.npcEmotions.SetMood();
 
         if (selectedOptionText.text == "E") // TO DO: grey out 'E' ui if the player isnt responding & doesnt have surplus dialog topics
         {
@@ -337,7 +371,7 @@ public class DialogueSystem : MonoBehaviour
             //else BlockDialogueOption(5);
         }
 
-        if (selectedOptionText.text == "Q")
+        if (selectedOptionText.text == "Q" || npcDialogue.endOfConversation)
         {
             LeaveDialogue();
         }
@@ -345,9 +379,9 @@ public class DialogueSystem : MonoBehaviour
 
     private void SetResponseTimer()
     {
-        if (otherDialogue.limitedTime)
+        if (npcDialogue.limitedTime)
         {
-            responseTimer = otherDialogue.timeLimit;
+            responseTimer = npcDialogue.timeLimit;
 
             responseTimerReset = responseTimer;
             responseTimerUI.maxValue = responseTimerReset;
@@ -380,16 +414,22 @@ public class DialogueSystem : MonoBehaviour
         dialogueUI.SetActive(false);
         inDialogue = false;
 
+        //Cursor.lockState = CursorLockMode.Locked;
+
         //Activate Player Controller
         //Unlock Camera
+
+        enabled = false;
     }
 
     private void ChangeTopic()
     {
         // get stored inquiries depending on NPC
-        playerDialogue.SetPlayerInquiriesForNPC(npc, npc.changeTopicDialogue[Random.Range(0, npc.changeTopicDialogue.Count)]);
-        otherDialogue = playerDialogue.questions;
-        playerDialogue.questions.dialogue = otherDialogue.dialogue;
+        npcDialogue = playerDialogue.SetPlayerQuestionsForNPC(npc, npc.npcDialogue.changeTopicDialogue[Random.Range(0, npc.npcDialogue.changeTopicDialogue.Count)]);
+
+
+        //npcDialogue = playerDialogue.questions;
+        //playerDialogue.questions.dialogue = npcDialogue.dialogue;
 
         playerIsSpeaking = true;
 
