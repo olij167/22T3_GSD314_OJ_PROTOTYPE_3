@@ -5,25 +5,27 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(AudioSource))]
-[RequireComponent(typeof(CharacterController))]
+//[RequireComponent(typeof(CharacterController))]
 public class AIStomp : MonoBehaviour
 {
     private AudioSource audioSource;
-    private CharacterController controller;
+    //private CharacterController controller;
+    private Rigidbody rb;
 
     [SerializeField] private List<AudioClip> footstepSounds;
     void Start()
     {
         audioSource = GetComponent<AudioSource>();
-        controller = GetComponent<CharacterController>();
+        //controller = GetComponent<CharacterController>();
+        rb = GetComponent<Rigidbody>();
     }
 
     void Update()
     {
-        if (controller.velocity.magnitude > 2f && !audioSource.isPlaying)
+        if (rb.velocity.magnitude > 2f && !audioSource.isPlaying)
         {
-            //audioSource.volume = Random.Range(0.25f, 0.35f);
-            audioSource.pitch = Random.Range(1f, 1.2f);
+            audioSource.volume = Random.Range(0.25f, 0.35f);
+            audioSource.pitch = Random.Range(0.7f, 0.8f);
             audioSource.PlayOneShot(footstepSounds[Random.Range(0, footstepSounds.Count)]);
         }
     }

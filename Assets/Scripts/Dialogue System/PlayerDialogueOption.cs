@@ -13,7 +13,8 @@ public class PlayerDialogueOption : ScriptableObject
 
     //public NPCEmotions.NPCFeelings emotionEffects;
     public float happinessEffect, stressEffect, shockEffect;
-    
+
+    //public float npcWillRemember;
 
     public NPCEmotions.NPCFeelings AffectEmotionValues(NPCEmotions.NPCFeelings npcEmotions)
     {

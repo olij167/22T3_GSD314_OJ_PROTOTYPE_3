@@ -5,7 +5,7 @@ using UnityEngine;
 //Add method to enable this script in other object
 public class UnlockNewDialogue : MonoBehaviour
 {
-    [SerializeField] private PlayerDialogue playerDialogue;
+    private PlayerDialogue playerDialogue;
     [SerializeField] private PlayerDialogueOption newDialogueOption;
     [SerializeField] private bool forSpecificNPC;
     [SerializeField] private List<NPCInfo> specificNPCList;

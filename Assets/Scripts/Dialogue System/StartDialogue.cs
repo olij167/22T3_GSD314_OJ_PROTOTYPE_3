@@ -4,10 +4,12 @@ using UnityEngine;
 
 public class StartDialogue : MonoBehaviour
 {
-    [SerializeField] private DialogueSystem dialogueSystem;
+    public DialogueSystem dialogueSystem;
     [SerializeField] private PlayerDialogue playerDialogue;
 
-    
+    private PatrolToRandomWayPoint npcPatrol;
+
+
     public void EnterDialogue(NPCInfo npc)
     {
         //Set NPC
@@ -24,19 +26,59 @@ public class StartDialogue : MonoBehaviour
 
         greetingDialogue.playerResponses = playerDialogue.SetPlayerQuestionsForNPC(npc, greetingDialogue).playerResponses;
 
-        dialogueSystem.SetNewDialogueText(greetingDialogue);
 
         dialogueSystem.playerDialogueText.text = playerDialogue.greetingDialogue[Random.Range(0, playerDialogue.greetingDialogue.Count)].dialogue;
 
-
+        
 
         //Deactivate Player Controller
+        dialogueSystem.playerMovement.enabled = false;
+        dialogueSystem.playerCam.enabled = false;
+
         //Lock Camera to NPC target
 
 
         //Cursor.lockState = CursorLockMode.Confined;
         //Cursor.visible = true;
         dialogueSystem.BeginDialogue();
+
+        dialogueSystem.SetNewDialogueText(greetingDialogue);
+
+    }
+
+    public void NPCInitiatedDialogue(NPCInfo npc, NPCDialogueOption startingDialogue)
+    {
+        //Set NPC
+        //Set greeting text
+        //Set player options
+        dialogueSystem.enabled = true;
+
+        dialogueSystem.npc = npc;
+        dialogueSystem.npc.npcEmotions.SetMood();
+        dialogueSystem.npcNameText.text = npc.npcName;
+
+        //NPCDialogueOption greetingDialogue = npc.npcDialogue.greetingDialogue[Random.Range(0, npc.npcDialogue.greetingDialogue.Count)];
+
+
+        //greetingDialogue.playerResponses = playerDialogue.SetPlayerQuestionsForNPC(npc, greetingDialogue).playerResponses;
+
+
+        dialogueSystem.playerDialogueText.text = playerDialogue.greetingDialogue[Random.Range(0, playerDialogue.greetingDialogue.Count)].dialogue;
+
+
+
+        //Deactivate Player Controller
+        dialogueSystem.playerMovement.enabled = false;
+        dialogueSystem.playerCam.enabled = false;
+
+        //Lock Camera to NPC target
+
+
+        //Cursor.lockState = CursorLockMode.Confined;
+        //Cursor.visible = true;
+        dialogueSystem.BeginDialogue();
+
+        dialogueSystem.SetNewDialogueText(startingDialogue);
     }
 
     public void EnterDialogueWithRandomNPC()

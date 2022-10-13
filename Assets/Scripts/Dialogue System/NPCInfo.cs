@@ -3,9 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = ("DialogueSystem/NPCInfo"))]
+
+[System.Serializable]
 public class NPCInfo : ScriptableObject
 {
     public string npcName;
+    public string npcGender;
+
+    public string npcProfileID;
 
     public NPCEmotions npcEmotions;
 

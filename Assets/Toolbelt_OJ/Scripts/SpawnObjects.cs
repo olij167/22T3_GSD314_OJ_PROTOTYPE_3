@@ -17,27 +17,27 @@ public class SpawnObjects : MonoBehaviour
     {
         if (!randomPrefabs)
         {
-            foreach (GameObject duckType in prefabs)
+            foreach (GameObject prefab in prefabs)
             {
-                SpawnGameObjects(duckType);
+                SpawnGameObjects(prefab, spawnNumPerPrefab);
             }
         }
         else
         {
             for (int i = 0; i < totalSpawnNum; i++)
             {
-                SpawnGameObjects(prefabs[Random.Range(0, prefabs.Count)]);
+                SpawnGameObjects(prefabs[Random.Range(0, prefabs.Count)], spawnNumPerPrefab);
             }
         }
     }
 
-    public void SpawnGameObjects(GameObject prefab)
+    public void SpawnGameObjects(GameObject prefab, int numToSpawn)
     {
-        for (int i = 0; i < spawnNumPerPrefab; i++)
+        for (int i = 0; i < numToSpawn; i++)
         {
             spawnPos = GenerateRandomWayPoint();
-            GameObject newDuck = Instantiate(prefab, spawnPos, Quaternion.Euler(new Vector3(-90, Random.Range(0, 360), 0)));
-            newDuck.transform.parent = parent;
+            GameObject newObject = Instantiate(prefab, spawnPos, Quaternion.Euler(new Vector3(-90, Random.Range(0, 360), 0)));
+            newObject.transform.parent = parent;
         }
     }
 

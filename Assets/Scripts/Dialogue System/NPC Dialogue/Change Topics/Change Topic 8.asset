@@ -19,3 +19,4 @@ MonoBehaviour:
   limitedTime: 0
   timeLimit: 0
   canChangeTopic: 1
+  endOfConversation: 0

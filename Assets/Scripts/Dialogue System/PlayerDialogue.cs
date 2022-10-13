@@ -13,10 +13,10 @@ public class PlayerDialogue : MonoBehaviour
 
     public PlayerDialogueOption viewMoreDialogue;
 
-    [HideInInspector]public NPCDialogueOption questions;
+    [HideInInspector] public NPCDialogueOption questions;
 
     [Serializable]
-    public struct PlayerQuestions
+    public class PlayerQuestions
     {
         public NPCInfo npc;
         public List<PlayerDialogueOption> questionsForNPC;
@@ -36,11 +36,16 @@ public class PlayerDialogue : MonoBehaviour
         //enable the player to choose a dialogue option
         questions.requiresResponse = true;
 
-        for (int i = 0; i < playerQuestions.Count; i++)
+        if (playerQuestions.Count > 0)
         {
-            if (playerQuestions[i].npc == npc)
+
+            for (int i = 0; i < playerQuestions.Count; i++)
             {
-                questions.playerResponses = playerQuestions[i].questionsForNPC;
+                //Set appropriate dialogue options
+                if (playerQuestions[i].npc == npc)
+                {
+                    questions.playerResponses = playerQuestions[i].questionsForNPC;
+                }
             }
         }
 
@@ -50,7 +55,7 @@ public class PlayerDialogue : MonoBehaviour
     //Add new dialogue option to playerQuestions for all npc's
     public void AddQuestionForAllNPCs(PlayerDialogueOption newDialogueOption)
     {
-        foreach(PlayerQuestions question in playerQuestions)
+        foreach (PlayerQuestions question in playerQuestions)
         {
             question.questionsForNPC.Add(newDialogueOption);
         }
@@ -67,4 +72,18 @@ public class PlayerDialogue : MonoBehaviour
             }
         }
     }
+
+    public void AddDialogueOptions()
+    {
+        for (int i = 0; i < playerQuestions.Count; i++)
+        {
+            playerQuestions[i].questionsForNPC = new List<PlayerDialogueOption>();
+
+            for (int d = 0; d < playerQuestions[i].npc.npcDialogue.dialogueConnections.Count; d++)
+            {
+                playerQuestions[i].questionsForNPC.Add(playerQuestions[i].npc.npcDialogue.dialogueConnections[d].playerDialogueInput);
+            }
+        }
+    }
+
 }

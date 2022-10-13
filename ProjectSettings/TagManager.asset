@@ -3,17 +3,20 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - StaminaBar
+  - GameTimer
+  - EndPanel
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Item
   - Water
   - UI
-  - 
-  - 
-  - 
+  - whatIsGround
+  - NPC
+  - Player
   - 
   - 
   - 

@@ -7,6 +7,10 @@ using TMPro;
 
 public class DialogueSystem : MonoBehaviour
 {
+    public FirstPersonMovement playerMovement;
+    public FirstPersonCam playerCam;
+
+
     [SerializeField] private bool inDialogue;
     [SerializeField] private bool playerIsSpeaking;
     [SerializeField] private bool timerAutoStart;
@@ -21,6 +25,7 @@ public class DialogueSystem : MonoBehaviour
 
     //Dialogue UI
     public TextMeshProUGUI npcNameText;
+    public TextMeshProUGUI npcMoodText;
     [SerializeField] private TextMeshProUGUI npcDialogueText;
     public TextMeshProUGUI playerDialogueText;
 
@@ -36,6 +41,7 @@ public class DialogueSystem : MonoBehaviour
     private float responseTimerReset;
 
     [SerializeField] private Slider responseTimerUI;
+    [SerializeField] private Slider happinessBar, stressBar, shockBar;
 
         // if true the timer will automatically start during a time-limited response and pick a random option if the player doesn't begin viewing the dialogue options
         // if false the timer won't start until the player has begun viewing the dialogue options
@@ -263,10 +269,11 @@ public class DialogueSystem : MonoBehaviour
 
         if (npcDialogue.requiresResponse)
         {
-            if (npcDialogue.playerResponses.Count == 0)
+            if (npcDialogue.playerResponses.Count <= 0)
             {
                 npcDialogue.playerResponses = playerDialogue.SetPlayerQuestionsForNPC(npc, npcDialogue).playerResponses;
             }
+
             if(!npcDialogue == playerDialogue.questions)
             {
                 playerIsSpeaking = false;
@@ -358,6 +365,11 @@ public class DialogueSystem : MonoBehaviour
         npc.npcEmotions.emotion = selectedDialogueOption.AffectEmotionValues(npc.npcEmotions.emotion);
         npc.npcEmotions.SetMood();
 
+        happinessBar.value = npc.npcEmotions.emotion.happiness;
+        stressBar.value = npc.npcEmotions.emotion.stress;
+        shockBar.value = npc.npcEmotions.emotion.shock;
+
+
         if (selectedOptionText.text == "E") // TO DO: grey out 'E' ui if the player isnt responding & doesnt have surplus dialog topics
         {
             if (!playerIsSpeaking)
@@ -405,6 +417,19 @@ public class DialogueSystem : MonoBehaviour
     {
         inDialogue = true;
         dialogueUI.SetActive(true);
+
+        happinessBar.maxValue = npc.npcEmotions.personality.happyMinThreshold + 10;
+        happinessBar.minValue = npc.npcEmotions.personality.sadMinThreshold - 10;
+        happinessBar.value = npc.npcEmotions.emotion.happiness;
+        
+        stressBar.maxValue = npc.npcEmotions.personality.angryMinThreshold + 10;
+        stressBar.minValue = npc.npcEmotions.personality.sadMinThreshold - 10;
+        stressBar.value = npc.npcEmotions.emotion.stress;
+
+        shockBar.maxValue = npc.npcEmotions.personality.surprisedMinThreshold + 10;
+        shockBar.minValue = npc.npcEmotions.personality.scaredMinThreshold - 10;
+        shockBar.value = npc.npcEmotions.emotion.shock;
+
         playerIsSpeaking = true;
 
     }
@@ -413,6 +438,14 @@ public class DialogueSystem : MonoBehaviour
     {
         dialogueUI.SetActive(false);
         inDialogue = false;
+
+        playerMovement.enabled = true;
+        playerCam.enabled = true;
+
+        foreach(NPCBrain npc in FindObjectsOfType<NPCBrain>())
+        {
+            npc.speakingToPlayer = false;
+        }
 
         //Cursor.lockState = CursorLockMode.Locked;
 

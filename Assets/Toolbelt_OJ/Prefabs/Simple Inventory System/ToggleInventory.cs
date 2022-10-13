@@ -5,6 +5,8 @@ using UnityEngine;
 // Activate Inventory UI by pressing 'Q'
 public class ToggleInventory : MonoBehaviour
 {
+    public KeyCode inventoryInput = KeyCode.Q;
+
     [SerializeField] private GameObject inventoryPanel;
     void Start()
     {
@@ -13,7 +15,7 @@ public class ToggleInventory : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Q))
+        if (Input.GetKeyDown(inventoryInput))
         {
             ToggleInventoryUI();
         }

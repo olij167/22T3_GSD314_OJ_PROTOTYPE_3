@@ -7,19 +7,22 @@ namespace Toolbelt_OJ
 {
     public class ObjectSelection : MonoBehaviour
     {
-        public KeyCode selectInput;
+        public KeyCode selectInput = KeyCode.E;
 
-        public float reachDistance;
+        public float reachDistance = 5f;
 
-        public Transform eyes, carryPos, highlightedTarget, selectedTarget;
+        public Transform rayOrigin, carryPos, highlightedTarget, selectedTarget;
 
         public List<int> keyLayerIndexList;
         int layerMask;
 
-        UnityEvent selectObjectEvent;
+        UnityEvent selectItemEvent, selectNPCEvent;
+
+        [SerializeField] private StartDialogue initiateDialogue;
         void Start()
         {
-            selectObjectEvent.AddListener(SelectObject);
+            selectItemEvent.AddListener(SelectItem);
+            //selectNPCEvent.AddListener(SelectNPC);
         }
 
 
@@ -32,20 +35,32 @@ namespace Toolbelt_OJ
 
             RaycastHit hit;
 
-            if (Physics.Raycast(eyes.position, eyes.TransformDirection(Vector3.forward), out hit, reachDistance, layerMask))
+            if (Physics.Raycast(rayOrigin.position, rayOrigin.TransformDirection(Vector3.forward), out hit, reachDistance, layerMask))
             {
                 highlightedTarget = hit.transform;
 
-                if (Input.GetKeyDown(selectInput) || Input.GetMouseButtonDown(0))
+
+
+                if (Input.GetKeyDown(selectInput))
                 {
-                    selectObjectEvent.Invoke();
+
+                    selectItemEvent.Invoke();
+
+                    //if (selectedTarget.GetComponent<NPCBrain>())
+                    //{
+                    //    selectNPCEvent.Invoke();
+                    //}
+                    ////else if (selectedTarget.GetComponent<ItemInWorld>())
+                    ////{
+                    ////    selectItemEvent.Invoke();
+                    ////}
                 }
             }
         }
 
-        void SelectObject()
+        void SelectItem()
         {
-            if (selectedTarget != null)
+            if (selectedTarget != null && selectedTarget.GetComponent<ItemInWorld>())
             {
                 //selectedTarget.GetComponent<Rigidbody>().isKinematic = false;
                 selectedTarget.GetComponent<Rigidbody>().useGravity = true;
@@ -62,6 +77,17 @@ namespace Toolbelt_OJ
             selectedTarget.parent = carryPos;
             selectedTarget.transform.position = carryPos.position;
         }
+
+        //void SelectNPC()
+        //{
+        //    if (selectedTarget != null && selectedTarget.GetComponent<NPCBrain>())
+        //    {
+        //        if (selectedTarget.GetComponent<NPCBrain>().npcInfo != null)
+        //        {
+        //            initiateDialogue.EnterDialogue(selectedTarget.GetComponent<NPCBrain>().npcInfo);
+        //        }
+        //    }
+        //}
 
     }
 }
